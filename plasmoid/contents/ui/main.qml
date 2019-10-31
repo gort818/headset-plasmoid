@@ -8,7 +8,7 @@ Item {
     width: 10
     height: 10
     id: mainitem
-    property string userName
+    property string batteryPercent
     Plasmoid.preferredRepresentation: Plasmoid.compactRepresentation
     Plasmoid.fullRepresentation: Item {
         Layout.minimumWidth: label.implicitWidth
