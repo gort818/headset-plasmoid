@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.0
 import org.kde.plasma.components 2.0 as PlasmaComponents
 import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
+
 Item {
     width: 10
     height: 10
@@ -12,42 +13,104 @@ Item {
     Plasmoid.fullRepresentation: Item {
         Layout.minimumWidth: label.implicitWidth
         Layout.minimumHeight: label.implicitHeight
-        Layout.preferredWidth: 120 * units.devicePixelRatio
-        Layout.preferredHeight: 80 * units.devicePixelRatio
-        
-        PlasmaComponents.Label {
-            id: label
-            anchors.fill: parent
-            text: i18n(userName)
-            horizontalAlignment: Text.AlignHCenter
+        Layout.preferredWidth: 210 * units.devicePixelRatio
+        Layout.preferredHeight: 200 * units.devicePixelRatio
+
+        Column {
+            Rectangle {
+                color: "transparent"
+                width: 200 * units.devicePixelRatio
+                height: 100 * units.devicePixelRatio
+                anchors.horizontalCenter: parent.horizontalCenter
+
+                PlasmaComponents.Label {
+                    id: label
+                    anchors.fill: parent
+                    text: i18n(batteryPercent)
+                    horizontalAlignment: Text.AlignHCenter
+                }
+            }
+
+            Rectangle {
+                width: 210 * units.devicePixelRatio
+                height: 10 * units.devicePixelRatio
+                color: "transparent"
+                anchors.horizontalCenter: parent.horizontalCenter
+
+                PlasmaComponents.Label {
+                    id: sidetone
+                    anchors.fill: parent
+                    horizontalAlignment: Text.AlignHCenter
+                    text: "Set Sidetone value"
+                }
+            }
+
+            Rectangle {
+                width: 210 * units.devicePixelRatio
+                height: 25 * units.devicePixelRatio
+                color: "transparent"
+                anchors.horizontalCenter: parent.horizontalCenter
+
+                PlasmaComponents.Slider {
+                    id: toneSlider
+                    anchors.fill: parent
+                    height: 20
+                    width: 100
+                    orientation: Qt.Horizontal
+                    minimumValue: 0
+                    maximumValue: 128
+                    stepSize: 2
+                    onPressedChanged: {
+                        cmd.exec("headsetcontrol -s" + toneSlider.value)
+                    }
+                }
+            }
+
+            Rectangle {
+                width: 210 * units.devicePixelRatio
+                height: 10 * units.devicePixelRatio
+                color: "transparent"
+                anchors.horizontalCenter: parent.horizontalCenter
+                PlasmaComponents.Label {
+                    id: sidetone_value
+                    anchors.fill: parent
+                    horizontalAlignment: Text.AlignHCenter
+                    text: toneSlider.value
+                }
+            }
+        }
+
+        PlasmaCore.DataSource {
+            id: whoamisource
+            engine: "executable"
+
+            connectedSources: ["headsetcontrol -b"]
+            onNewData: {
+                mainitem.batteryPercent = data.stdout
+            }
+            interval: 5000
         }
     }
-    
 
-
-    
     PlasmaCore.DataSource {
-        id: whoamisource
+        id: cmd
         engine: "executable"
-       
-        connectedSources: ["headsetcontrol -b"]
-        onNewData:{
-            mainitem.userName = data.stdout
+        connectedSources: []
+        onNewData: {
+            var exitCode = data["exit code"]
+            var exitStatus = data["exit status"]
+            var stdout = data["stdout"]
+            var stderr = data["stderr"]
+            exited(exitCode, exitStatus, stdout, stderr)
+            disconnectSource(sourceName)
         }
-        interval: 5000
+        function exec(cmdstr) {
+            connectSource(cmdstr)
+        }
+        signal exited(int exitCode, int exitStatus, string stdout, string stderr)
     }
-    
-    
-    PlasmaCore.IconItem {
-		
-                // source - the icon to be displayed
-                source: "audio-headset"
-               
-                
-                // height & width set to equal the size of the parent item (the empty "Item" above)
-		        width: units.iconSizes.small
-    	        height: units.iconSizes.small
-	}
-    
-}
 
+    Plasmoid.toolTipSubText: {
+        "Headset Configuration"
+    }
+}
