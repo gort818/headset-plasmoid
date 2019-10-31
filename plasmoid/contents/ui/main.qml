@@ -3,27 +3,7 @@ import QtQuick.Layouts 1.0
 import org.kde.plasma.components 2.0 as PlasmaComponents
 import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
-import QtQuick.Controls 1.6 as Controls1
 
-
-/*
-*   Copyright (C) 2011 by Daker Fernandes Pinheiro <dakerfp@gmail.com>
-*
-*   This program is free software; you can redistribute it and/or modify
-*   it under the terms of the GNU Library General Public License as
-*   published by the Free Software Foundation; either version 2, or
-*   (at your option) any later version.
-*
-*   This program is distributed in the hope that it will be useful,
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*   GNU General Public License for more details
-*
-*   You should have received a copy of the GNU Library General Public
-*   License along with this program; if not, write to the
-*   Free Software Foundation, Inc.,
-*   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-*/
 Item {
     width: 10
     height: 10
@@ -115,36 +95,6 @@ Item {
                 mainitem.userName = data.stdout
             }
             interval: 5000
-        }
-    }
-
-    Connections {
-        target: cmd
-        onExited: {
-            if (exitCode == 0 && exitStatus == 0) {
-                if (stdout != null && stdout.length > 5) {
-                    if (stdout.substring(0, 6) === "Screen") {
-                        var array = stdout.split('\n')
-                        if (array.length > 1) {
-                            var out = array[1].substring(0,
-                                                         (array[1].indexOf(
-                                                              "connected") - 1))
-                            if (out.length > 0) {
-                                plasmoid.configuration.output = out
-                            }
-                        }
-                    }
-                }
-            }
-            if (stderr.indexOf("not found") > -1) {
-                if (exitCode == 1 && exitStatus == 0) {
-
-                    //warning: output ... not found; ignoring
-                    //xrandr: Need crtc to set gamma on.
-                }
-                if (exitCode == 127 && exitStatus == 0)
-                    errorDialog.visible = true
-            }
         }
     }
 
