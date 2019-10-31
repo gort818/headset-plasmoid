@@ -17,10 +17,7 @@ Item {
         Layout.preferredHeight: 200 * units.devicePixelRatio
 
         Column {
-            spacing: 0
-
             Rectangle {
-                id: rect1
                 color: "transparent"
                 width: 200 * units.devicePixelRatio
                 height: 100 * units.devicePixelRatio
@@ -29,13 +26,12 @@ Item {
                 PlasmaComponents.Label {
                     id: label
                     anchors.fill: parent
-                    text: i18n(userName)
+                    text: i18n(batteryPercent)
                     horizontalAlignment: Text.AlignHCenter
                 }
             }
 
             Rectangle {
-                id: rect3
                 width: 210 * units.devicePixelRatio
                 height: 10 * units.devicePixelRatio
                 color: "transparent"
@@ -50,14 +46,13 @@ Item {
             }
 
             Rectangle {
-                id: rect2
                 width: 210 * units.devicePixelRatio
                 height: 25 * units.devicePixelRatio
                 color: "transparent"
                 anchors.horizontalCenter: parent.horizontalCenter
 
                 PlasmaComponents.Slider {
-                    id: redSlider
+                    id: toneSlider
                     anchors.fill: parent
                     height: 20
                     width: 100
@@ -65,9 +60,8 @@ Item {
                     minimumValue: 0
                     maximumValue: 128
                     stepSize: 2
-                    // Keys.onTabPressed: cmd.exec("headsetcontrol -s"  + redSlider.value);
                     onPressedChanged: {
-                        cmd.exec("headsetcontrol -s" + redSlider.value)
+                        cmd.exec("headsetcontrol -s" + toneSlider.value)
                     }
                 }
             }
@@ -81,7 +75,7 @@ Item {
                     id: sidetone_value
                     anchors.fill: parent
                     horizontalAlignment: Text.AlignHCenter
-                    text: redSlider.value
+                    text: toneSlider.value
                 }
             }
         }
@@ -92,7 +86,7 @@ Item {
 
             connectedSources: ["headsetcontrol -b"]
             onNewData: {
-                mainitem.userName = data.stdout
+                mainitem.batteryPercent = data.stdout
             }
             interval: 5000
         }
@@ -117,6 +111,6 @@ Item {
     }
 
     Plasmoid.toolTipSubText: {
-        "Configuration for Headsets."
+        "Headset Configuration"
     }
 }
