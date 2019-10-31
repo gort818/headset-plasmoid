@@ -5,6 +5,7 @@ import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
 import QtQuick.Controls 1.6 as Controls1
 
+
 /*
 *   Copyright (C) 2011 by Daker Fernandes Pinheiro <dakerfp@gmail.com>
 *
@@ -23,12 +24,9 @@ import QtQuick.Controls 1.6 as Controls1
 *   Free Software Foundation, Inc.,
 *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
-
-
-
 Item {
-   // width: 10
-    //height: 10
+    width: 10
+    height: 10
     id: mainitem
     property string userName
     Plasmoid.preferredRepresentation: Plasmoid.compactRepresentation
@@ -37,144 +35,120 @@ Item {
         Layout.minimumHeight: label.implicitHeight
         Layout.preferredWidth: 210 * units.devicePixelRatio
         Layout.preferredHeight: 200 * units.devicePixelRatio
-        
+
         Column {
             spacing: 0
-        
-        Rectangle {
-            id: rect1
-            color: "transparent"
-             width: 200 * units.devicePixelRatio
-             height: 100 * units.devicePixelRatio
-              anchors.horizontalCenter: parent.horizontalCenter
-            
-        
-        PlasmaComponents.Label {
-            id: label
-            anchors.fill: parent
-            text: i18n(userName)
-            horizontalAlignment: Text.AlignHCenter
-        }
-        
-        }
-        
-        Rectangle {
-            id: rect3
-            width: 210 * units.devicePixelRatio
-                    height: 10 * units.devicePixelRatio
-                    color: "transparent"
-                     anchors.horizontalCenter: parent.horizontalCenter
-            
-            PlasmaComponents.Label {
-                    id: sidetone
-            anchors.fill: parent
-             horizontalAlignment: Text.AlignHCenter
-             text: "Set Sidetone value"
-            
-            }
-        }
-        
-        
-        
+
             Rectangle {
-                    id: rect2
-                    width: 210 * units.devicePixelRatio
-                    height: 25 * units.devicePixelRatio
-                    color: "transparent"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    
-                    
-        
-                    PlasmaComponents.Slider {
-                        id: redSlider
-                        anchors.fill: parent
-                        height: 20
-                        width: 100
-                        orientation: Qt.Horizontal
-                        minimumValue: 0
-                        maximumValue: 128
-                        stepSize: 2
-                       // Keys.onTabPressed: cmd.exec("headsetcontrol -s"  + redSlider.value);
-                       onPressedChanged:
-                       {
-                           cmd.exec("headsetcontrol -s"  + redSlider.value);
-                       }
+                id: rect1
+                color: "transparent"
+                width: 200 * units.devicePixelRatio
+                height: 100 * units.devicePixelRatio
+                anchors.horizontalCenter: parent.horizontalCenter
+
+                PlasmaComponents.Label {
+                    id: label
+                    anchors.fill: parent
+                    text: i18n(userName)
+                    horizontalAlignment: Text.AlignHCenter
+                }
+            }
+
+            Rectangle {
+                id: rect3
+                width: 210 * units.devicePixelRatio
+                height: 10 * units.devicePixelRatio
+                color: "transparent"
+                anchors.horizontalCenter: parent.horizontalCenter
+
+                PlasmaComponents.Label {
+                    id: sidetone
+                    anchors.fill: parent
+                    horizontalAlignment: Text.AlignHCenter
+                    text: "Set Sidetone value"
+                }
+            }
+
+            Rectangle {
+                id: rect2
+                width: 210 * units.devicePixelRatio
+                height: 25 * units.devicePixelRatio
+                color: "transparent"
+                anchors.horizontalCenter: parent.horizontalCenter
+
+                PlasmaComponents.Slider {
+                    id: redSlider
+                    anchors.fill: parent
+                    height: 20
+                    width: 100
+                    orientation: Qt.Horizontal
+                    minimumValue: 0
+                    maximumValue: 128
+                    stepSize: 2
+                    // Keys.onTabPressed: cmd.exec("headsetcontrol -s"  + redSlider.value);
+                    onPressedChanged: {
+                        cmd.exec("headsetcontrol -s" + redSlider.value)
                     }
-            }                 
-                    
+                }
+            }
+
             Rectangle {
                 width: 210 * units.devicePixelRatio
-                    height: 10 * units.devicePixelRatio
-                    color: "transparent"
-                     anchors.horizontalCenter: parent.horizontalCenter
+                height: 10 * units.devicePixelRatio
+                color: "transparent"
+                anchors.horizontalCenter: parent.horizontalCenter
                 PlasmaComponents.Label {
                     id: sidetone_value
-            anchors.fill: parent
-             horizontalAlignment: Text.AlignHCenter
-             text: redSlider.value
-             
-             
-         }    
-            }      
-                    
-                    
+                    anchors.fill: parent
+                    horizontalAlignment: Text.AlignHCenter
+                    text: redSlider.value
                 }
-        
-         
-
-        
-        
-    
-    
-
-
-    
-    PlasmaCore.DataSource {
-        id: whoamisource
-        engine: "executable"
-       
-        connectedSources: ["headsetcontrol -b"]
-        onNewData:{
-            mainitem.userName = data.stdout
+            }
         }
-        interval: 5000
-    }
-    
-    
-    
-}
 
-Connections {
+        PlasmaCore.DataSource {
+            id: whoamisource
+            engine: "executable"
+
+            connectedSources: ["headsetcontrol -b"]
+            onNewData: {
+                mainitem.userName = data.stdout
+            }
+            interval: 5000
+        }
+    }
+
+    Connections {
         target: cmd
         onExited: {
-            if(exitCode == 0 && exitStatus == 0){
-                if(stdout != null && stdout.length > 5){
-                    if(stdout.substring(0, 6) === "Screen"){
-                        var array = stdout.split('\n');
-                        if(array.length > 1){
-                            var out = array[1].substring(0,  (array[1].indexOf("connected") -1));
-                            if(out.length > 0){
-                                plasmoid.configuration.output = out;
+            if (exitCode == 0 && exitStatus == 0) {
+                if (stdout != null && stdout.length > 5) {
+                    if (stdout.substring(0, 6) === "Screen") {
+                        var array = stdout.split('\n')
+                        if (array.length > 1) {
+                            var out = array[1].substring(0,
+                                                         (array[1].indexOf(
+                                                              "connected") - 1))
+                            if (out.length > 0) {
+                                plasmoid.configuration.output = out
                             }
                         }
                     }
                 }
-
             }
-            if(stderr.indexOf("not found") > -1){
-                if( exitCode == 1 && exitStatus == 0){
+            if (stderr.indexOf("not found") > -1) {
+                if (exitCode == 1 && exitStatus == 0) {
+
                     //warning: output ... not found; ignoring
                     //xrandr: Need crtc to set gamma on.
                 }
-                if( exitCode == 127 && exitStatus == 0) errorDialog.visible = true;
+                if (exitCode == 127 && exitStatus == 0)
+                    errorDialog.visible = true
             }
         }
     }
 
-
-
-
-PlasmaCore.DataSource {
+    PlasmaCore.DataSource {
         id: cmd
         engine: "executable"
         connectedSources: []
@@ -191,7 +165,8 @@ PlasmaCore.DataSource {
         }
         signal exited(int exitCode, int exitStatus, string stdout, string stderr)
     }
-    
-    Plasmoid.toolTipSubText: {"Check settings for safe limits."}
-    
+
+    Plasmoid.toolTipSubText: {
+        "Configuration for Headsets."
+    }
 }
