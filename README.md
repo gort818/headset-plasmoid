@@ -9,4 +9,4 @@ Reports battery percent and abitiliy to change Sidetone value
 ![screenshot](https://i.imgur.com/LbNyytU.png) 
 
 
-![Imgur](https://i.imgur.com/5IORBwu.gifv)
+![plasmoid in action](demo/headset.gif)
