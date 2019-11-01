@@ -17,10 +17,7 @@ Item {
      spacing: 0
      Layout.minimumWidth: units.gridUnit * 20
      Layout.minimumHeight: units.gridUnit * 15
-     anchors.topMargin: 15
-     
     Rectangle {
-        anchors.topMargin: 15
         color: "transparent"
         height:5
         Layout.fillWidth: true
@@ -38,21 +35,22 @@ Item {
     
     Rectangle {
         color: "transparent"
-        height: units.gridUnit * 5
+        height: units.gridUnit * .5
         Layout.fillWidth: true
         PlasmaComponents.Label {
             height:1
             id: sidetone_valuetest
-            text: i18n(deviceName)
+            text: i18n("Device: " + deviceName)
             anchors.centerIn: parent
         }
     }
     
     Rectangle {
         color: "transparent"
-       height: units.gridUnit * 1.5
+       height: units.gridUnit * .5
         Layout.fillWidth: true
         PlasmaComponents.Label {
+            height: 1
             id: deviceString
             text: i18n(batteryPercent)
             anchors.centerIn: parent
@@ -62,7 +60,7 @@ Item {
     
      Rectangle {
         color: "transparent"
-        height: units.gridUnit * 1.5
+        height: units.gridUnit * .5
         Layout.fillWidth: true
          Header{
             id: label_sidetone
@@ -75,12 +73,13 @@ Item {
     
     Rectangle {
         color: "transparent"
-        height: units.gridUnit * 1.5
+        height: units.gridUnit * .1
         Layout.fillWidth: true
+        Layout.topMargin: 5
         
         PlasmaComponents.Slider {
             id: toneSlider
-            Layout.fillWidth: true
+           width: 280
             anchors.centerIn: parent
             orientation: Qt.Horizontal
             minimumValue: 0
@@ -98,11 +97,14 @@ Item {
     
     Rectangle {
         color: "transparent"
-       height: units.gridUnit * 1.5
+       height: units.gridUnit * .1
         Layout.fillWidth: true
+        Layout.bottomMargin: 5
         PlasmaComponents.Label {
             id: sidetone_value
+            height: 1
             anchors.centerIn: parent
+            verticalAlignment: Text.AlignTop
             text: toneSlider.value
         }
     }
@@ -121,7 +123,7 @@ Item {
             id: whoami
             engine: "executable"
 
-            connectedSources: ["headsetcontrol -b |  grep battery"]
+            connectedSources: ["headsetcontrol -b |  grep -i battery"]
             onNewData: {
                 main.batteryPercent = data.stdout
             }
