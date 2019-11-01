@@ -5,92 +5,130 @@ import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
 
 Item {
-    width: 10
-    height: 10
-    id: mainitem
+    id: main
+    
+    property string deviceName
     property string batteryPercent
-    Plasmoid.preferredRepresentation: Plasmoid.compactRepresentation
-    Plasmoid.fullRepresentation: Item {
-        Layout.minimumWidth: label.implicitWidth
-        Layout.minimumHeight: label.implicitHeight
-        Layout.preferredWidth: 210 * units.devicePixelRatio
-        Layout.preferredHeight: 200 * units.devicePixelRatio
-
-        Column {
-            Rectangle {
-                color: "transparent"
-                width: 200 * units.devicePixelRatio
-                height: 100 * units.devicePixelRatio
-                anchors.horizontalCenter: parent.horizontalCenter
-
-                PlasmaComponents.Label {
-                    id: label
-                    anchors.fill: parent
-                    text: i18n(batteryPercent)
-                    horizontalAlignment: Text.AlignHCenter
-                }
-            }
-
-            Rectangle {
-                width: 210 * units.devicePixelRatio
-                height: 10 * units.devicePixelRatio
-                color: "transparent"
-                anchors.horizontalCenter: parent.horizontalCenter
-
-                PlasmaComponents.Label {
-                    id: sidetone
-                    anchors.fill: parent
-                    horizontalAlignment: Text.AlignHCenter
-                    text: "Set Sidetone value"
-                }
-            }
-
-            Rectangle {
-                width: 210 * units.devicePixelRatio
-                height: 25 * units.devicePixelRatio
-                color: "transparent"
-                anchors.horizontalCenter: parent.horizontalCenter
-
-                PlasmaComponents.Slider {
-                    id: toneSlider
-                    anchors.fill: parent
-                    height: 20
-                    width: 100
-                    orientation: Qt.Horizontal
-                    minimumValue: 0
-                    maximumValue: 128
-                    stepSize: 2
-                    onPressedChanged: {
-                        cmd.exec("headsetcontrol -s" + toneSlider.value)
-                    }
-                }
-            }
-
-            Rectangle {
-                width: 210 * units.devicePixelRatio
-                height: 10 * units.devicePixelRatio
-                color: "transparent"
-                anchors.horizontalCenter: parent.horizontalCenter
-                PlasmaComponents.Label {
-                    id: sidetone_value
-                    anchors.fill: parent
-                    horizontalAlignment: Text.AlignHCenter
-                    text: toneSlider.value
-                }
+    
+    //Plasmoid.preferredRepresentation: Plasmoid.compactRepresentation
+    Plasmoid.fullRepresentation:ColumnLayout {
+     anchors.centerIn: parent
+     anchors.fill: parent
+     spacing: 0
+     Layout.minimumWidth: units.gridUnit * 20
+     Layout.minimumHeight: units.gridUnit * 15
+     anchors.topMargin: 15
+     
+    Rectangle {
+        anchors.topMargin: 15
+        color: "transparent"
+        height:5
+        Layout.fillWidth: true
+         Header{
+            id: label
+            //anchors.fill: parent
+            text: i18n("Headset Configuration")
+            //horizontalAlignment: Text.AlignHCenter
+        }
+        
+         
+        
+        
+    }
+    
+    Rectangle {
+        color: "transparent"
+        height: units.gridUnit * 5
+        Layout.fillWidth: true
+        PlasmaComponents.Label {
+            height:1
+            id: sidetone_valuetest
+            text: i18n(deviceName)
+            anchors.centerIn: parent
+        }
+    }
+    
+    Rectangle {
+        color: "transparent"
+       height: units.gridUnit * 1.5
+        Layout.fillWidth: true
+        PlasmaComponents.Label {
+            id: deviceString
+            text: i18n(batteryPercent)
+            anchors.centerIn: parent
+        }
+    }
+    
+    
+     Rectangle {
+        color: "transparent"
+        height: units.gridUnit * 1.5
+        Layout.fillWidth: true
+         Header{
+            id: label_sidetone
+            //anchors.fill: parent
+            text: i18n("Set Sidetone")
+            //horizontalAlignment: Text.AlignHCenter
+        }
+        
+    }
+    
+    Rectangle {
+        color: "transparent"
+        height: units.gridUnit * 1.5
+        Layout.fillWidth: true
+        
+        PlasmaComponents.Slider {
+            id: toneSlider
+            Layout.fillWidth: true
+            anchors.centerIn: parent
+            orientation: Qt.Horizontal
+            minimumValue: 0
+            maximumValue: 128
+            stepSize: 2
+            onPressedChanged: {
+                cmd.exec("headsetcontrol -s" + toneSlider.value)
             }
         }
-
-        PlasmaCore.DataSource {
-            id: whoamisource
+        
+        
+        
+    }
+    
+    
+    Rectangle {
+        color: "transparent"
+       height: units.gridUnit * 1.5
+        Layout.fillWidth: true
+        PlasmaComponents.Label {
+            id: sidetone_value
+            anchors.centerIn: parent
+            text: toneSlider.value
+        }
+    }
+    
+    PlasmaCore.DataSource {
+            id: test
             engine: "executable"
 
-            connectedSources: ["headsetcontrol -b"]
+            connectedSources: ["headsetcontrol -b |  grep -i found  | sed  's/Found //g' | tr -d '!'"]
             onNewData: {
-                mainitem.batteryPercent = data.stdout
+                main.deviceName = data.stdout
+            }
+        }
+        
+    PlasmaCore.DataSource {
+            id: whoami
+            engine: "executable"
+
+            connectedSources: ["headsetcontrol -b |  grep battery"]
+            onNewData: {
+                main.batteryPercent = data.stdout
             }
             interval: 5000
         }
-    }
+    
+}
 
     PlasmaCore.DataSource {
         id: cmd
