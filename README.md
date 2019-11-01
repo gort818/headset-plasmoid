@@ -9,4 +9,4 @@ Reports battery percent and abitiliy to change Sidetone value
 ![screenshot](https://i.imgur.com/LbNyytU.png) 
 
 
-![gif](blob:https://imgur.com/43c1d63e-5204-4266-acbd-5b49e9a5a295)
+![Imgur](https://i.imgur.com/5IORBwu.gifv)
