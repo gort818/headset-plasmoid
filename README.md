@@ -7,7 +7,7 @@ Plasmoid to control [headsetControl](https://github.com/Sapd/HeadsetControl)
 Reports battery percent and abitiliy to change Sidetone value
 
 
-##Install
+## Install
 
 1. git clone https://github.com/gort818/headset-plasmoid
 2. plasmapkg2 -i plasmoid 
